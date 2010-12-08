@@ -7,9 +7,7 @@ typedef long unsigned int lint;
 #include "queue.h"
 #include "robot.h"
 
-#include "module.h"
-
-class Barcode{
+class Barcode {
 	private:
 		lint nexttime;
 		lint length;

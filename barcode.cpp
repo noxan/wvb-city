@@ -3,9 +3,8 @@
 #define QSIZE 70// >=NBIT * NPERBIT
 
 #include "barcode.h"
-#include "module.h"
 
-Barcode::Barcode(Robot* robot) : robot(robot){
+Barcode::Barcode(Robot* robot) {
 	nexttime = 0;
 	length = 0;
 	q = Queue();
