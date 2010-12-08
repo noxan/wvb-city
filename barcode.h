@@ -9,14 +9,14 @@ typedef long unsigned int lint;
 
 #include "module.h"
 
-class Barcode : public Module {
+class Barcode{
 	private:
 		lint nexttime;
 		lint length;
 		Queue q;
 		int code;
 		int cspeed;
-		Robot* r;
+		Robot* robot;
 	public:
 		Barcode(Robot* robot);
 		void meassureLength();
