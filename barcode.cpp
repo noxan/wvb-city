@@ -4,7 +4,7 @@
 
 #include "barcode.h"
 
-Barcode::Barcode(Robot* robot) {
+Barcode::Barcode(Robot* robot) : robot(robot) {
 	nexttime = 0;
 	length = 0;
 	q = Queue();
