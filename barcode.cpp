@@ -7,7 +7,7 @@
 //#include "queue.h"
 
 
-Barcode::Barcode(Robot* robot) : Module(robot) {
+Barcode::Barcode(Robot* robot) : robot(robot){
 	nexttime = 0;
 	length = 0;
 	q = Queue();
@@ -22,13 +22,13 @@ void Barcode::meassureLength() {
 	int v = 0;
 	lint sTime = 0, eTime = 0;
 	int SPEED = 50;
-	getRobot()->setSpeed(SPEED, SPEED);
-	getRobot()->update();
+	robot->setSpeed(SPEED, SPEED);
+	robot->update();
 	bool isOnLine = false;
-	unsigned int* sv = getRobot()->getLineSensorsCalibrate();
+	unsigned int* sv = robot->getLineSensorsCalibrate();
 	for(int i=0; i<3000; i++) {
 		v = (v*3+sv[2])/4;
-		getRobot()->update();
+		robot->update();
 		if(!isOnLine && v>500) {
 			OrangutanBuzzer::play("D");
 			sTime = OrangutanTime::ms();
@@ -42,16 +42,16 @@ void Barcode::meassureLength() {
 		}
 		OrangutanTime::delayMilliseconds(1);
 	}
-	getRobot()->setSpeed(0,0);
-	getRobot()->update();
+	robot->setSpeed(0,0);
+	robot->update();
 	length = SPEED * (eTime - sTime);
 }
 
 void Barcode::run(lint time) {
 	if(time>=nexttime) {
 		// nexttime = time + std::min(length/((QSIZE-1) * cspeed), 100);
-		nexttime = time + (length/((QSIZE-1) * getRobot()->getSpeedAverage()));
-		q.enqueue(q[QSIZE-1] + getRobot()->getLineSensorsCalibrate()[4]);
+		nexttime = time + (length/((QSIZE-1) * robot->getSpeedAverage()));
+		q.enqueue(q[QSIZE-1] + robot->getLineSensorsCalibrate()[4]);
 		code = 0;
 		for(int b=0; b<NBIT; b++) {
 			int s = NPERBIT*b;
