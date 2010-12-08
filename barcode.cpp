@@ -3,7 +3,6 @@
 #define QSIZE 70 // >=NBIT * NPERBIT
 #include "barcode.h"
 #include "module.h"
-#include <pololu/orangutan>
 //#include "queue.h"
 
 
@@ -30,17 +29,17 @@ void Barcode::meassureLength() {
 		v = (v*3+sv[2])/4;
 		robot->update();
 		if(!isOnLine && v>500) {
-			OrangutanBuzzer::play("D");
+			getRobot()->play("D");
 			sTime = OrangutanTime::ms();
 			isOnLine = true;
 		}
 		if(isOnLine && v < 500) {
-			OrangutanBuzzer::play("A");
+			getRobot()->play("A");
 			eTime = OrangutanTime::ms();
 			isOnLine = false;
 			break;
 		}
-		OrangutanTime::delayMilliseconds(1);
+		getRobot()->delay(1);
 	}
 	robot->setSpeed(0,0);
 	robot->update();
@@ -57,8 +56,7 @@ void Barcode::run(lint time) {
 			int s = NPERBIT*b;
 			int e = NPERBIT*(b+1)-1;
 			int v = (q[e]-q[s])/(NPERBIT-1); //avg in dem Bit
-			if(v>700) {
-				//freuen, schwaaarz
+			if(v>700) {//freuen, schwaaarz
 				;
 			} else if(300<=v && v<=700) { //grau (und hoffentlich nicht wei
 				code |= 1<<b;
