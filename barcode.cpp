@@ -51,7 +51,7 @@ void Barcode::run(lint time) {
 	if(time>=nexttime) {
 		// nexttime = time + std::min(length/((QSIZE-1) * cspeed), 100);
 		nexttime = time + (length/((QSIZE-1) * getRobot()->getSpeedAverage()));
-		q.enqueue(q[QSIZE-1] + getRobot()->getLineSensorsCalibrate()[2]);
+		q.enqueue(q[QSIZE-1] + getRobot()->getLineSensorsCalibrate()[4]);
 		code = 0;
 		for(int b=0; b<NBIT; b++) {
 			int s = NPERBIT*b;
