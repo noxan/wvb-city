@@ -33,5 +33,11 @@ clean:
 program: $(TARGET).hex
 	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c avrisp2 -P $(PORT) -U flash:w:$(TARGET).hex
 
-commit:
-	svn commit ./ --username wvbcity
+svnci:
+	svn ci ./ --username wvbcity
+
+svnud:
+	svn update
+
+svndi:
+	svn di
