@@ -4,8 +4,6 @@
 #include "robot.h"
 
 
-
-
 Robot::Robot() {
 	pol.init(2000); //init
 	OrangutanTime::reset(); //zeit auf null setzen?
