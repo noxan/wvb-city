@@ -10,23 +10,18 @@ extern "C" void __cxa_pure_virtual() {
 	while (1);
 }
 
-
 int main() {
-	OrangutanTime::reset();
-
 	Robot robot;
 	LineModule line(&robot);
 	Barcode bar(&robot);
-
+	
 	robot.clear();
 	robot.print("Press B to start!");
 	do {
 		bar.meassureLength();
 		while(!robot.isPressed(BUTTON_B | BUTTON_C)) {
 			robot.clear();
-			robot.print("B: retry.");
-			robot.move(0,1);
-			robot.print("C: enter.");
+			robot.print("B: retry.", "C: enter.");
 			robot.delay(10);
 	   }
 	} while(robot.isPressed(BUTTON_B));
@@ -50,7 +45,6 @@ int main() {
 			robot.clear();
 			robot.print("NORM");
 			
-			
 			robot.update();
 			
 			// handle modules
@@ -59,11 +53,9 @@ int main() {
 			bar.run(time);
 			
 			code = bar.getBarcode();
-
 			
 			if(code!=-1 and code&32 and code&1) { //ein paar Prozessortakte sparen ;-)
-				
-				if(code==37) OrangutanBuzzer::play("C");
+				if(code==37) robot.play("C");
 				//robot.clear();
 				//robot.print(code);
 				//robot.delay(200);

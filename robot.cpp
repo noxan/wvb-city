@@ -4,12 +4,14 @@
 #include "robot.h"
 
 
+
+
 Robot::Robot() {
     pol.init(2000); //init
+    OrangutanTime::reset(); //zeit auf null setzen?
 	setDistance(450);
-	start("cali");
+	initWait("  cali  ");
 	lineSensorsCalibrate();
-	start("ready");
 }
 
 void Robot::update() {
@@ -17,23 +19,32 @@ void Robot::update() {
 	pol.readLineSensors(sensor_line_raw, IR_EMITTERS_ON); //update line sensors raw
 	pol.readLineSensorsCalibrated(sensor_line_calibrate, IR_EMITTERS_ON); //update line sensors calibrate
 	for(int i=0;i<5;i++) {
-		sensor_line_clean[i] = (sensor_line_calibrate[i] > 250 ? LINE : BACK);;
-	}	sensor_distance[0] = OrangutanAnalog::read(6)<getDistance();
-	sensor_distance[1] = OrangutanAnalog::read(7)<getDistance();
+		if(sensor_line_calibrate[i]<CALI_CODE) {
+			sensor_line_clean[i] = BACK;
+		} else if(sensor_line_calibrate[i]<CALI_LINE) {
+			sensor_line_clean[i] = CODE;
+		} else {
+			sensor_line_clean[i] = LINE;
+		}
+	}
+	sensor_distance[0] = OrangutanAnalog::read(7)<getDistance();
+	sensor_distance[1] = OrangutanAnalog::read(6)<getDistance();
 }
 
-void Robot::start() {
-	start("");
+void Robot::initWait() {
+	initWait("", "Press B!", BUTTON_B);
 }
 
-void Robot::start(const char *str) {
+void Robot::initWait(const char *line1) {
+	initWait(line1, "Press B!", BUTTON_B);
+}
+
+void Robot::initWait(const char *line1, const char *line2, unsigned char buttons) {
 	clear();
-	print("Press B!");
-	move(0, 1);
-	print(str);
+	print(line1, line2);
 	setSpeed(0, 0);
 	update();
-	waitForPress(BUTTON_B);
+	waitForPress(buttons);
 }
 
 //speed set
@@ -76,6 +87,8 @@ unsigned int *Robot::getLineSensorsCalibrate() {
 
 //sensor line cali
 void Robot::lineSensorsCalibrate() {
+	clear();
+	print("  cali  ", "progress");
 	for(int counter=0;counter<80;counter++) {
         if(counter < 20 || counter >= 60) {
             OrangutanMotors::setSpeeds(30, -30);
@@ -106,6 +119,11 @@ void Robot::print(long value) {
 void Robot::print(const char *str) {
 	OrangutanLCD::print(str);
 }
+void Robot::print(const char *line1, const char *line2) {
+	print(line1);
+	move(0, 1);
+	print(line2);
+}
 void Robot::clear() {
 	OrangutanLCD::clear();
 }
@@ -133,4 +151,9 @@ unsigned char Robot::waitForButton(unsigned char buttons) {
 }
 unsigned char Robot::isPressed(unsigned char buttons) {
 	return OrangutanPushbuttons::isPressed(buttons);
+}
+
+//buzzer
+void Robot::play(const char *sequence) {
+	OrangutanBuzzer::play(sequence);
 }

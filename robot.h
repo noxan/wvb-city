@@ -4,6 +4,9 @@
 #include <pololu/orangutan>
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
+#define CALI_CODE 250
+#define CALI_LINE 600
+
 class Robot {
 public:
 	static const unsigned int BACK = 0;
@@ -32,6 +35,7 @@ public:
 	//lcd
 	void print(long value);
 	void print(const char *str);
+	void print(const char *line1, const char *line2);
 	void clear();
 	void move(unsigned char x, unsigned char y);
 	//time
@@ -42,6 +46,12 @@ public:
 	unsigned char waitForRelease(unsigned char buttons);
 	unsigned char waitForButton(unsigned char buttons);
 	unsigned char isPressed(unsigned char buttons);
+	//buzzer
+	void play(const char *sequence);
+	//wait
+	void initWait();
+	void initWait(const char *line1);
+	void initWait(const char *line1, const char *line2, unsigned char buttons);
 private:
     Pololu3pi pol;
 	int speedl; //speed left
@@ -54,9 +64,6 @@ private:
 	unsigned int getDistance();
 	void setDistance(unsigned int dist);
 	unsigned int dist;
-    //start
-	void start();
-	void start(const char *str);
 };
 
 #endif
