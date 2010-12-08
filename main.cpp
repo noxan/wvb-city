@@ -4,6 +4,7 @@
 #include "line.h"
 #include "robot.h"
 #include "barcode.h"
+#include "speed.h"
 
 // handle undefined virtual function
 extern "C" void __cxa_pure_virtual() {
@@ -14,9 +15,11 @@ int main() {
 	Robot robot;
 	LineModule line(&robot);
 	Barcode bar(&robot);
+	SpeedModule speed(&robot, &line);
 	
 	robot.clear();
 	robot.print("Press B to start!");
+	robot.waitForButton(BUTTON_B);
 	do {
 		bar.meassureLength();
 		while(!robot.isPressed(BUTTON_B | BUTTON_C)) {
@@ -29,7 +32,7 @@ int main() {
 	static const int CROSSROADS = 0;
 	static const int NORMAL = 1;
 	
-	int status = NORMAL;
+	
 	int decision = 0;
 	//speedModule.setMaxSpeed(60);
 	
@@ -37,6 +40,8 @@ int main() {
 	
 	long unsigned int time;
 	int code;
+	int status = NORMAL;
+	speed.setMaxSpeed(60);
 	
 	while(true) {
 		time = robot.ms();
@@ -48,13 +53,15 @@ int main() {
 			robot.update();
 			
 			// handle modules
-			//speedModule.run(time, true, false); //passt Geschwindigkeit unter Beruecksichtigung des mittleren Sensors an
+			speed.run(time, true, false); //passt Geschwindigkeit unter Beruecksichtigung des mittleren Sensors an
 			line.run(time);
 			bar.run(time);
 			
-			code = bar.getBarcode();
 			
-			if(code!=-1 and code&32 and code&1) { //ein paar Prozessortakte sparen ;-)
+			code = bar.getBarcode();
+
+			//TODO: false wegmachen
+			if(code!=-1 and code&32 and code&1 and false) { //ein paar Prozessortakte sparen ;-)
 				if(code==37) robot.play("C");
 				//robot.clear();
 				//robot.print(code);
@@ -64,7 +71,7 @@ int main() {
 				//robot.delay(150);
 				
 				if(code==43) { //Schnellfahrcode
-					//speedModule.setMaxSpeed(100);
+					speed.setMaxSpeed(100);
 				} else if(code == 33 or code==35 or code==37 or code==39 or code==41) { //Kreuzung oder Abzweigung
 					int ndecision = -1; //Diese Richtungsentscheidung darf man nicht fahren, da keine strasse da
 					if(code==35)
@@ -76,19 +83,19 @@ int main() {
 					do
 						decision = rand()%3;
 					while(decision == ndecision);
-					//status = CROSSROADS;
-					//speedModule.setMaxSpeed(30); //->Langsam fahren in Kreuzungen
+					status = CROSSROADS;
+					speed.setMaxSpeed(30); //->Langsam fahren in Kreuzungen
 				}
 			}
 		} else if(status == CROSSROADS) {
 			robot.clear();
 			robot.print("CR");
-			//speedModule.run(time, true, true); //passt Geschwindigkeit unter Beruecksichtigung beider Sensoren an => rechts vor links
+			speed.run(time, true, true); //passt Geschwindigkeit unter Beruecksichtigung beider Sensoren an => rechts vor links
 			line.setTarget(decision);
 			line.run2(time);
 			if(line.hasFinished()) {
 				status = NORMAL;
-				//speedModule.setMaxSpeed(60); // auf Strassen schneller fahren
+				speed.setMaxSpeed(60); // auf Strassen schneller fahren
 			}
 		}
 	}

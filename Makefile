@@ -15,7 +15,7 @@ LDFLAGS=-Wl,-gc-sections -lpololu_$(DEVICE) -Wl,-relax
 
 PORT ?= /dev/ttyUSB0
 AVRDUDE=avrdude
-OBJECT_FILES=main.o module.o robot.o barcode.o queue.o  line.o
+OBJECT_FILES=main.o module.o robot.o barcode.o queue.o line.o speed.o
 TARGET=main
 
 
