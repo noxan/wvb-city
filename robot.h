@@ -12,9 +12,9 @@ public:
 	static const unsigned int BACK = 0;
 	static const unsigned int CODE = 1;
 	static const unsigned int LINE = 2;
-    //constructor
+	//constructor
 	Robot();
-    //update
+	//update
 	void update();
 	//speed set
 	void setSpeedLeft(int left);
@@ -24,8 +24,8 @@ public:
 	int getSpeedLeft();
 	int getSpeedRight();
 	int getSpeedAverage();
-    //sensor dist
-    bool *getDistanceSensors();
+	//sensor dist
+	bool *getDistanceSensors();
 	//sensor line
 	unsigned int *getLineSensorsRaw();
 	unsigned int *getLineSensorsClean();
@@ -53,14 +53,14 @@ public:
 	void initWait(const char *line1);
 	void initWait(const char *line1, const char *line2, unsigned char buttons);
 private:
-    Pololu3pi pol;
+	Pololu3pi pol;
 	int speedl; //speed left
-    int speedr; //speed right
+	int speedr; //speed right
 	bool sensor_distance[2]; //sensor distance
 	unsigned int sensor_line_raw[5]; //sensor line raw
 	unsigned int sensor_line_clean[5]; //sensor line clean
 	unsigned int sensor_line_calibrate[5]; //sensor line calibrate
-    //distance (internal)
+	//distance (internal)
 	unsigned int getDistance();
 	void setDistance(unsigned int dist);
 	unsigned int dist;

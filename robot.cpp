@@ -7,8 +7,8 @@
 
 
 Robot::Robot() {
-    pol.init(2000); //init
-    OrangutanTime::reset(); //zeit auf null setzen?
+	pol.init(2000); //init
+	OrangutanTime::reset(); //zeit auf null setzen?
 	setDistance(450);
 	initWait("  cali  ");
 	lineSensorsCalibrate();
@@ -90,14 +90,14 @@ void Robot::lineSensorsCalibrate() {
 	clear();
 	print("  cali  ", "progress");
 	for(int counter=0;counter<80;counter++) {
-        if(counter < 20 || counter >= 60) {
-            OrangutanMotors::setSpeeds(30, -30);
-        } else {
-       	    OrangutanMotors::setSpeeds(-30, 30);
+		if(counter < 20 || counter >= 60) {
+			OrangutanMotors::setSpeeds(30, -30);
+		} else {
+			OrangutanMotors::setSpeeds(-30, 30);
 		}
 		pol.calibrateLineSensors();
-        OrangutanTime::delayMilliseconds(20);
-    }
+		OrangutanTime::delayMilliseconds(20);
+	}
 	OrangutanMotors::setSpeeds(0, 0);
 }
 
