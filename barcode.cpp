@@ -1,10 +1,9 @@
-#define NBIT   6
+#define NBIT 6
 #define NPERBIT 10
-#define QSIZE 70 // >=NBIT * NPERBIT
+#define QSIZE 70// >=NBIT * NPERBIT
+
 #include "barcode.h"
 #include "module.h"
-//#include "queue.h"
-
 
 Barcode::Barcode(Robot* robot) : robot(robot){
 	nexttime = 0;
@@ -29,17 +28,17 @@ void Barcode::meassureLength() {
 		v = (v*3+sv[2])/4;
 		robot->update();
 		if(!isOnLine && v>500) {
-			getRobot()->play("D");
-			sTime = OrangutanTime::ms();
+			robot->play("D");
+			sTime = robot->ms();
 			isOnLine = true;
 		}
 		if(isOnLine && v < 500) {
-			getRobot()->play("A");
-			eTime = OrangutanTime::ms();
+			robot->play("A");
+			eTime = robot->ms();
 			isOnLine = false;
 			break;
 		}
-		getRobot()->delay(1);
+		robot->delay(1);
 	}
 	robot->setSpeed(0,0);
 	robot->update();
