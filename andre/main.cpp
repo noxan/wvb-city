@@ -7,8 +7,8 @@ namespace common { // Allgemeines
 }
 
 namespace speed { // Geschwindigkeitsmodul --> TODO
-	static const unsigned int DEFAULT_LEFT = 80;
-	static const unsigned int DEFAULT_RIGHT = 80;
+	static const unsigned int DEFAULT_LEFT = 50;
+	static const unsigned int DEFAULT_RIGHT = 50;
 	int left = DEFAULT_LEFT; // Geschwindigkeit des linken Rades
 	int right = DEFAULT_RIGHT; // Geschwindigkeit des rechten Rades
 
@@ -102,10 +102,12 @@ int main() {
 	return 0;
 }
 
+
+
 namespace speed {
 	void runSpeed(Robot *robot, unsigned long delta) {
 		bool *sensors = robot->getDistanceSensors();
-		unsigned long maxTime = (unsigned long)(((float)speed::MAX_TIME/robot->getSpeedAverage())*speed::MAX_TIME);
+		unsigned long maxTime = MAX_TIME*2*50/(speed::DEFAULT_LEFT+speed::DEFAULT_RIGHT);
 		if(sensors[0]) {
 			if(time+delta <= maxTime) {
 				time += delta;
