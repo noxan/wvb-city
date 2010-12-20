@@ -4,8 +4,8 @@
 #include <pololu/orangutan>
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
-#define CALI_CODE 80
-#define CALI_LINE 350
+#define CALI_CODE 170
+#define CALI_LINE 450
 
 class Robot {
 public:
