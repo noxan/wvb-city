@@ -9,6 +9,13 @@
 
 class Robot {
 public:
+	static const unsigned int NORMAL = 0;
+	static const unsigned int C4 = 1;
+	static const unsigned int C3SL = 2;
+	static const unsigned int C3SR = 3;
+	static const unsigned int C3LR = 4;
+	static const unsigned int CUNDEF = 5;
+
 	static const unsigned int BACK = 1;
 	static const unsigned int CODE = 2;
 	static const unsigned int LINE = 4;
@@ -20,6 +27,9 @@ public:
 	Robot();
     //update
 	void update();
+	//status
+	void setStatus(unsigned int status);
+	unsigned int getStatus();
 	//speed set
 	void setSpeedLeft(int left);
 	void setSpeedRight(int right);
@@ -59,6 +69,7 @@ public:
 	void initWait(const char *line1);
 	void initWait(const char *line1, const char *line2, unsigned char buttons);
 private:
+	unsigned int status;
     Pololu3pi pol;
 	int speedl; //speed left
     int speedr; //speed right

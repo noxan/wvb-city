@@ -28,6 +28,14 @@ void Robot::update() {
 	sensor_distance[1] = OrangutanAnalog::read(6)<getDistance();
 }
 
+void Robot::setStatus(unsigned int status) {
+	this->status = status;
+}
+
+unsigned int Robot::getStatus() {
+	return status;
+}
+
 void Robot::initWait() {
 	initWait("", "Press B!", BUTTON_B);
 }
