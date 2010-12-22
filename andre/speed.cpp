@@ -15,23 +15,33 @@ int Speed::getRight() {
 	return right;
 }
 
-void Speed::run(Robot *robot, unsigned long delta) {
+void Speed::run(Robot *robot, unsigned long delta, bool crossroad) {
 	bool *sensors = robot->getDistanceSensors();
-	unsigned long maxTime = STOP_TIME*2*50/(DEFAULT_LEFT+DEFAULT_RIGHT);
-	if(sensors[0]) {
-		if(time+delta <= maxTime) {
-			time += delta;
+/*	if(crossroad) {
+		if(sensors[0] || sensors[1]) {
+			left = 0;
+			right = 0;
 		} else {
-			time = maxTime;
+			left = DEFAULT_LEFT;
+			right = DEFAULT_RIGHT;
 		}
-	} else {
-		if(time>=delta) {
-			time -= delta;
+	} else {*/
+		unsigned long maxTime = STOP_TIME*2*50/(DEFAULT_LEFT+DEFAULT_RIGHT);
+		if(sensors[0] || (sensors[1] && crossroad)) {
+			if(time+delta <= maxTime) {
+				time += delta;
+			} else {
+				time = maxTime;
+			}
 		} else {
-			time = 0;
+			if(time>=delta) {
+				time -= delta;
+			} else {
+				time = 0;
+			}
 		}
-	}
-	float factor = 1-(time/(float)maxTime);
-	left = (int)(DEFAULT_LEFT*factor);
-	right = (int)(DEFAULT_RIGHT*factor);
+		float factor = 1-(time/(float)maxTime);
+		left = (int)(DEFAULT_LEFT*factor);
+		right = (int)(DEFAULT_RIGHT*factor);
+//	}
 }

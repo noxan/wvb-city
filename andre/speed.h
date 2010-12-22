@@ -4,10 +4,6 @@
 #include "robot.h"
 
 class Speed {
-private:
-	unsigned long time;
-	int left;
-	int right;
 public:
 	static const int DEFAULT_LEFT = 50;
 	static const int DEFAULT_RIGHT = 50;
@@ -18,7 +14,11 @@ public:
 	int getLeft();
 	int getRight();
 
-	void run(Robot *robot, unsigned long delta);
+	void run(Robot *robot, unsigned long delta, bool crossroad);
+private:
+	unsigned long time;
+	int left;
+	int right;
 };
 
 #endif

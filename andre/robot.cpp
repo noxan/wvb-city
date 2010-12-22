@@ -3,7 +3,6 @@
 
 #include "robot.h"
 
-
 Robot::Robot() {
     pol.init(2000); //init
 	setDistance(450);

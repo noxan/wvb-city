@@ -10,7 +10,8 @@ unsigned int Line::getStatus() {
 }
 
 void Line::run(Robot *robot, unsigned long delta) {
-	unsigned int *sensors = robot->getLineSensorsClean();
+//	if((speed.getLeft()+speed.getRight())/2 != 0) {
+		unsigned int *sensors = robot->getLineSensorsClean();
 		if(status == FORWARD) {
 			if(sensors[2] & Robot::LINE) {
 				robot->setSpeed(speed.getLeft(), speed.getRight());	
@@ -48,4 +49,5 @@ void Line::run(Robot *robot, unsigned long delta) {
 				status = FORWARD;
 			}
 		}
+//	}
 }

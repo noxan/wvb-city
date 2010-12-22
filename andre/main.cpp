@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "common.h"
 
 int main() {
@@ -6,6 +7,8 @@ int main() {
 	const unsigned long delay = 10; // Zeit die pro Schleifendurchlauf gewartet wird
 	
 	OrangutanTime::reset();
+
+	srand(robot.ms());
 
 	robot.initWait("Ready!");
 
@@ -18,36 +21,42 @@ int main() {
 		// Linien- und Codemodul"
 
 		//*
-		speed.run(&robot, delta);
-		line.run(&robot, delta);
-		code.run(&robot, delta);
 
-		switch(robot.getStatus()) {
-			case Robot::NORMAL:
-				robot.print("NORMAL");
-				break;
-			case Robot::C4:
-				robot.print("C4");
-				break;
-			case Robot::C3SL:
-				robot.print("C3SL");
-				break;
-			case Robot::C3SR:
-				robot.print("C3SR");
-				break;
-			case Robot::C3LR:
-				robot.print("C3LR");
-				break;
-			case Robot::CUNDEF:
-				robot.print("CUNDEF");
-				break;
+		if(robot.getStatus() == Robot::NORMAL) {
+			line.run(&robot, delta);
+			code.run(&robot, delta);
+			speed.run(&robot, delta, false);
+			
+			int c = code.getCode();
+			if(c == -2) {
+				robot.setStatus(Robot::CUNDEF);
+			} else if(c != -1) {
+				if((c & Code::CMASK) == Code::C4) {
+					robot.setStatus(Robot::C4);
+				} else if((c & Code::CMASK) == Code::C3SL) {
+					robot.setStatus(Robot::C3SL);
+				} else if((c & Code::CMASK) == Code::C3SR) {
+					robot.setStatus(Robot::C3SR);
+				} else if((c & Code::CMASK) == Code::C3LR) {
+					robot.setStatus(Robot::C3LR);
+				}
+				crossroad.choose(robot.getStatus());
+			}
+		} else if(robot.getStatus() == Robot::CUNDEF) {
+			crossroad.runUndef(&robot, delta);
+			speed.run(&robot, delta, true);	
+		} else {
+			crossroad.run(&robot, delta);
+			speed.run(&robot, delta, true);	
 		}
+
+		robot.print(robot.getStatus());
 //
-		//*/
+		/*/
 		
 		// Testausgabe zum Farbwerte anzeigen
 
-		/*
+		//*
 		unsigned int *sensors = robot.getLineSensorsClean();
 		robot.print(sensors[2]);
 		robot.print(" ");

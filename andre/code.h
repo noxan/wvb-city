@@ -15,14 +15,20 @@ public:
 	static const unsigned int NOCODE = 0;
 	static const unsigned int BEGIN = 1;
 	static const unsigned int CODE = 2;
-	static const unsigned int END = 3;
 
 	static const int CMASK = 0x3;
 	static const int C4 = 0x0;
 	static const int C3SR = 0x1;
 	static const int C3SL = 0x2;
 	static const int C3LR = 0x3;
+
+	Code();
+
+	int getCode();
+	unsigned int getStatus();
+	void run(Robot *robot, unsigned long delta);
 private:
+	unsigned int dif;
 	unsigned long time;
 	unsigned int status;
 	int code;
@@ -30,11 +36,6 @@ private:
 	unsigned int values[VALUES];
 	unsigned int index;
 	unsigned int average[4];
-public:
-	Code();
-
-	unsigned int getStatus();
-	void run(Robot *robot, unsigned long delta);
 };
 
 #endif

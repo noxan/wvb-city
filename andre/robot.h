@@ -5,7 +5,7 @@
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
 #define CALI_CODE 170
-#define CALI_LINE 450
+#define CALI_LINE 400
 
 class Robot {
 public:

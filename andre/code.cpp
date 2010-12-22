@@ -6,7 +6,14 @@ Code::Code() {
 	status = NOCODE;
 	code = CODE_EMPTY;
 	nextTime = 0;
+	dif = 0;
 	index = 0;
+}
+
+int Code::getCode() {
+	int c = code;
+	code = CODE_EMPTY;
+	return c;
 }
 
 unsigned int Code::getStatus() {
@@ -24,15 +31,20 @@ void Code::run(Robot *robot, unsigned long delta) {
 				time += delta;
 				if(time >= maxTime) {
 					status = BEGIN;
+					dif = 0;
 					time = 0;
 				}
 			} else {
-				time = 0;
+				if(++dif >= 4) {
+					time = 0;
+					dif = 0;
+				}
 			}
 		} else if(status == BEGIN) {
 			robot->print("B");
 			if(!(sensors[4] & Robot::CODE)) {
 				index = 0;
+				time = 0;
 				nextTime = 0;
 				status = CODE;
 			}
@@ -47,7 +59,6 @@ void Code::run(Robot *robot, unsigned long delta) {
 			}
 			if(index == VALUES) {
 				status = NOCODE;
-				robot->setStatus(Robot::CUNDEF);
 				code = CODE_ERROR;
 				time = 0;
 				return;
@@ -56,8 +67,9 @@ void Code::run(Robot *robot, unsigned long delta) {
 			if((sensors[4] & Robot::CODE)) {
 				time += delta;
 				if(time >= maxTime) {
-					status = END;
+					status = NOCODE;
 					time = 0;
+					dif = 0;
 					// code berechnen
 					code = 0;
 					for(unsigned int i = 0; i < 4; i++) {
@@ -67,51 +79,26 @@ void Code::run(Robot *robot, unsigned long delta) {
 						}
 						unsigned int bit = (unsigned int)(sum/(index/4.0));
 						average[i] = bit;
-						if(bit > 400) {
+						if(bit > 300) {
 							code |= (1<<i);
 						}
 					}
+					/*
+					robot->setSpeed(0,0);
+					robot->update();
+					for(int i = 0; i < 4; i++) {
+						robot->clear();
+						robot->print(average[i]);
+						robot->delay(1000);
+					}
+					*/
 				}
 			} else {
-				time = 0;
-			}	
-		} else if(status == END) {
-			robot->print("E");
-			if(!(sensors[4] & Robot::CODE)) {
-				status = NOCODE;
-
-				if((code & Code::CMASK) == Code::C4) {
-					robot->setStatus(Robot::C4);
-				} else if((code & Code::CMASK) == Code::C3SL) {
-					robot->setStatus(Robot::C3SL);
-				} else if((code & Code::CMASK) == Code::C3SR) {
-					robot->setStatus(Robot::C3SR);
-				} else if((code & Code::CMASK) == Code::C3LR) {
-					robot->setStatus(Robot::C3LR);
+				if(++dif >= 4) {
+					time = 0;
+					dif = 0;
 				}
-					// Ergebnisausgabe des Codes
-				/*
-				robot->setSpeed(0,0);
-				robot->update();
-				robot->delay(1000);
-				robot->clear();
-				robot->print("i=");
-				robot->print(index);
-				robot->delay(1000);
-				for(int i = 0; i < 4; i++) {
-					robot->clear();
-					robot->print("avg=");
-					robot->print(average[i]);
-					robot->delay(1000);
-				}*/
-				/*
-				robot->delay(1000);
-				for(unsigned int i = 0; i < index; i++) {
-					robot->clear();
-					robot->print(values[i]);
-					robot->delay(250);
-				}*/
-			}
+			}	
 		}
 	} else {
 		robot->print("N");

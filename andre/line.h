@@ -4,8 +4,6 @@
 #include "robot.h"
 
 class Line {
-private:
-	unsigned int status;
 public:
 	static const unsigned int FORWARD = 0;
 	static const unsigned int LEFT = 1;
@@ -18,6 +16,8 @@ public:
 	unsigned int getStatus();
 
 	void run(Robot* robot, unsigned long delta);
+private:
+	unsigned int status;
 };
 
 #endif
