@@ -16,9 +16,9 @@ void Line::run(Robot *robot, unsigned long delta) {
 			robot->setSpeed(speed.getLeft(), speed.getRight());	
 		} else {
 			if(sensors[1] & Robot::LINE) {
-				robot->setSpeed(speed.getLeft(), speed.getRight());
+				robot->setSpeed((int)(speed.getLeft()*0.83), (int)(speed.getRight()*1.16));
 			} else if(sensors[3] & Robot::LINE) {
-				robot->setSpeed(speed.getLeft(), speed.getRight());
+				robot->setSpeed((int)(speed.getLeft()*1.16), (int)(speed.getRight()*0.83));
 			}
 		}
 
