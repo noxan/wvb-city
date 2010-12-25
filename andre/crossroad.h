@@ -18,7 +18,6 @@ public:
 
 	void choose(unsigned int type);
 	void run(Robot *robot, unsigned long delta);
-	void runUndef(Robot *robot, unsigned long delta);
 private:
 	unsigned int time;
 	unsigned int status;

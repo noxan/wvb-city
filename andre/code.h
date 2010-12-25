@@ -10,7 +10,7 @@ public:
 
 	static const unsigned long MAX_TIME = 50;
 
-	static const unsigned int VALUES = 100;
+	static const unsigned int VALUES = 80;
 
 	static const unsigned int NOCODE = 0;
 	static const unsigned int BEGIN = 1;
@@ -28,8 +28,9 @@ public:
 	unsigned int getStatus();
 	void run(Robot *robot, unsigned long delta);
 private:
-	unsigned int dif;
-	unsigned long time;
+	unsigned int dif; // code anfang und ende, abweichungen von codefarbe
+	unsigned long time; // zeitzähler allgemein
+	unsigned long leftcnt; // während code auf linker seite schwarz zählen
 	unsigned int status;
 	int code;
 	unsigned int nextTime;

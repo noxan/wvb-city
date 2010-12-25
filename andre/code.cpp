@@ -7,6 +7,7 @@ Code::Code() {
 	code = CODE_EMPTY;
 	nextTime = 0;
 	dif = 0;
+	leftcnt = 0;
 	index = 0;
 }
 
@@ -21,9 +22,11 @@ unsigned int Code::getStatus() {
 }
 
 void Code::run(Robot *robot, unsigned long delta) {
+	if(robot->getSpeedAverage() > 15) {
+
 	unsigned int *sensors = robot->getLineSensorsClean();
 	unsigned long maxTime = MAX_TIME; //(unsigned long)(((float)MAX_TIME/robot->getSpeedAverage())*MAX_TIME);
-
+	
 	if(line.getStatus() == Line::FORWARD) {
 		if(status == NOCODE) {
 			robot->print("N");
@@ -46,12 +49,26 @@ void Code::run(Robot *robot, unsigned long delta) {
 				index = 0;
 				time = 0;
 				nextTime = 0;
+				leftcnt = 0;
 				status = CODE;
 			}
 		} else if(status == CODE) {
 			robot->print("C");
 			nextTime += delta;
 			unsigned int *raw = robot->getLineSensorsCalibrate();
+
+			if(sensors[0] & Robot::LINE) {
+				leftcnt += delta;
+				if(leftcnt > 30) {
+					status = NOCODE;
+					code = CODE_ERROR;
+					time = 0;
+					return;
+				}
+			} else {
+				leftcnt = 0;
+			}
+
 				// code lesen
 			while(nextTime >= 10 && index < VALUES) { // falls wieder Zeit ist
 				nextTime -= 10;
@@ -83,15 +100,6 @@ void Code::run(Robot *robot, unsigned long delta) {
 							code |= (1<<i);
 						}
 					}
-					/*
-					robot->setSpeed(0,0);
-					robot->update();
-					for(int i = 0; i < 4; i++) {
-						robot->clear();
-						robot->print(average[i]);
-						robot->delay(1000);
-					}
-					*/
 				}
 			} else {
 				if(++dif >= 4) {
@@ -102,6 +110,8 @@ void Code::run(Robot *robot, unsigned long delta) {
 		}
 	} else {
 		robot->print("N");
+	}
+
 	}
 
 	robot->print(" ");

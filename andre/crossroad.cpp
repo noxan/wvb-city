@@ -47,6 +47,9 @@ void Crossroad::choose(unsigned int type) {
 				setLeft();
 			}
 			break;
+		case Robot::CUNDEF:
+			setRight();
+			break;
 	}
 }
 
@@ -73,6 +76,11 @@ void Crossroad::run(Robot *robot, unsigned long delta) {
 			} else {
 				time += delta;
 				if(time > 30) {
+					if(counter == 0 && option == RIGHT) {
+						if(!(sensors[4] & Robot::LINE)) {
+							setStraight();
+						}
+					}
 					time = 0;
 					status = CROSS1;
 				}
@@ -90,6 +98,11 @@ void Crossroad::run(Robot *robot, unsigned long delta) {
 			} else {
 				time += delta;
 				if(time > 30) {
+					if(counter == 1 && option == STRAIGHT) {
+						if(!((sensors[1] | sensors[2] | sensors[3]) & Robot::LINE)) {
+							setLeft();
+						}
+					}
 					time = 0;
 					status = CROSS2;
 				}
@@ -157,29 +170,6 @@ void Crossroad::run(Robot *robot, unsigned long delta) {
 			robot->print("ST");
 		}
 //	}
-}
-
-void Crossroad::runUndef(Robot *robot, unsigned long delta) { // TODO
-	unsigned int *sensors = robot->getLineSensorsClean();
-
-	counter += delta;
-
-	if(sensors[2] & Robot::LINE) {
-		robot->setSpeed(speed.getLeft(), speed.getRight());	
-	} else if(sensors[1] & Robot::LINE) {
-		robot->setSpeed((int)(speed.getLeft()*0.5), (int)(speed.getRight()*1.7));
-	} else if(sensors[3] & Robot::LINE) {
-		robot->setSpeed((int)(speed.getLeft()*1.7), (int)(speed.getRight()*0.5));
-	} else {
-		robot->setSpeed(speed.getLeft(), -speed.getRight());
-	}
-
-	robot->print("UD");
-
-	if(counter > 3000) {
-		counter = 0;
-		robot->setStatus(Robot::NORMAL);
-	}
 }
 
 void Crossroad::setRight() {

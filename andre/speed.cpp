@@ -33,7 +33,7 @@ void Speed::run(Robot *robot, unsigned long delta, bool crossroad) {
 			} else {
 				time = maxTime;
 			}
-		} else {
+		} else { 
 			if(time>=delta) {
 				time -= delta;
 			} else {
@@ -43,5 +43,15 @@ void Speed::run(Robot *robot, unsigned long delta, bool crossroad) {
 		float factor = 1-(time/(float)maxTime);
 		left = (int)(DEFAULT_LEFT*factor);
 		right = (int)(DEFAULT_RIGHT*factor);
+		if(!crossroad && factor == 0) { // Hupe
+			robot->play("C");
+		}
 //	}
+/*	if(sensors[0] || (sensors[1] && crossroad)) {
+		left = 0;
+		right = 0;
+	} else {
+		left = DEFAULT_LEFT;
+		right = DEFAULT_RIGHT;
+	}*/
 }

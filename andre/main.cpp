@@ -28,10 +28,11 @@ int main() {
 			speed.run(&robot, delta, false);
 			
 			int c = code.getCode();
-			if(c == -2) {
+			if(c != -1) {
 				robot.setStatus(Robot::CUNDEF);
-			} else if(c != -1) {
-				if((c & Code::CMASK) == Code::C4) {
+				if(c == -2) {
+					 robot.setStatus(Robot::CUNDEF);
+				} else if((c & Code::CMASK) == Code::C4) {
 					robot.setStatus(Robot::C4);
 				} else if((c & Code::CMASK) == Code::C3SL) {
 					robot.setStatus(Robot::C3SL);
@@ -42,9 +43,6 @@ int main() {
 				}
 				crossroad.choose(robot.getStatus());
 			}
-		} else if(robot.getStatus() == Robot::CUNDEF) {
-			crossroad.runUndef(&robot, delta);
-			speed.run(&robot, delta, true);	
 		} else {
 			crossroad.run(&robot, delta);
 			speed.run(&robot, delta, true);	
