@@ -7,8 +7,6 @@
 #include "speed.h"
 #include "crossroad.h"
 
-extern unsigned long bt;
-
 extern Robot robot;
 extern Line line;
 extern Code code;

@@ -60,6 +60,7 @@ void Crossroad::run(Robot *robot, unsigned long delta) {
 		if(counter == maxOption) {
 			counter = 0;
 			robot->setStatus(Robot::NORMAL);
+			speed.setDefaultSpeed(Speed::DEFAULT_SPEED, 1000);
 			return;
 		}
 

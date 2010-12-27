@@ -22,7 +22,7 @@ unsigned int Code::getStatus() {
 }
 
 void Code::run(Robot *robot, unsigned long delta) {
-	if(robot->getSpeedAverage() > 15) {
+//	if(robot->getSpeedAverage() > 15) {
 
 	unsigned int *sensors = robot->getLineSensorsClean();
 	unsigned long maxTime = MAX_TIME; //(unsigned long)(((float)MAX_TIME/robot->getSpeedAverage())*MAX_TIME);
@@ -51,6 +51,7 @@ void Code::run(Robot *robot, unsigned long delta) {
 				nextTime = 0;
 				leftcnt = 0;
 				status = CODE;
+				speed.setDefaultSpeed(65, 1000);
 			}
 		} else if(status == CODE) {
 			robot->print("C");
@@ -112,7 +113,7 @@ void Code::run(Robot *robot, unsigned long delta) {
 		robot->print("N");
 	}
 
-	}
+//	}
 
 	robot->print(" ");
 	robot->print(index);

@@ -1,14 +1,9 @@
-#include <stdlib.h>
 #include "common.h"
 
 int main() {
 	unsigned long time = 0; // Zeitpunkt am Anfang eines Schleifendurchlaufs
 	unsigned long delta = 0; // Zeit die ein Schleifendurchlauf benötigt
-	const unsigned long delay = 10; // Zeit die pro Schleifendurchlauf gewartet wird
-	
-	OrangutanTime::reset();
-
-	srand(robot.ms());
+	const unsigned long delay = 1; // Zeit die pro Schleifendurchlauf gewartet wird
 
 	robot.initWait("Ready!");
 
@@ -22,13 +17,17 @@ int main() {
 
 		//*
 
+		float v = robot.getSpeedAverageAbs();
+
 		if(robot.getStatus() == Robot::NORMAL) {
-			line.run(&robot, delta);
-			code.run(&robot, delta);
+			float v = robot.getSpeedAverage();
+			line.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f)));
+			code.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f))); // in Abhängigkeit von Geschwindigkeit
 			speed.run(&robot, delta, false);
 			
 			int c = code.getCode();
 			if(c != -1) {
+				speed.setDefaultSpeed(50, 1000);
 				robot.setStatus(Robot::CUNDEF);
 				if(c == -2) {
 					 robot.setStatus(Robot::CUNDEF);
@@ -44,7 +43,7 @@ int main() {
 				crossroad.choose(robot.getStatus());
 			}
 		} else {
-			crossroad.run(&robot, delta);
+			crossroad.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f)));
 			speed.run(&robot, delta, true);	
 		}
 

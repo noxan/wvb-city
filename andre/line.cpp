@@ -25,8 +25,10 @@ void Line::run(Robot *robot, unsigned long delta) {
 		if(code.getStatus() == Code::NOCODE) {
 			if((sensors[0] & Robot::LINE)) {
 				status = LEFT;
+				speed.setDefaultSpeed(50, 500);
 			} else if((sensors[4] & Robot::LINE)) {
 				status = RIGHT;
+				speed.setDefaultSpeed(50, 500);
 			}
 		}
 	} else if(status == LEFT) {
@@ -38,6 +40,7 @@ void Line::run(Robot *robot, unsigned long delta) {
 		robot->setSpeed(speed.getLeft()/-2, speed.getRight());
 		if(sensors[2] & Robot::LINE) {
 			status = FORWARD;
+			speed.setDefaultSpeed(Speed::DEFAULT_SPEED, 500);
 		}
 	} else if(status == RIGHT) {
 		robot->setSpeed(speed.getLeft(), speed.getRight());
@@ -48,6 +51,7 @@ void Line::run(Robot *robot, unsigned long delta) {
 		robot->setSpeed(speed.getLeft(), speed.getRight()/-2);
 		if(sensors[2] & Robot::LINE) {
 			status = FORWARD;
+			speed.setDefaultSpeed(Speed::DEFAULT_SPEED, 500);
 		}
 	}
 }

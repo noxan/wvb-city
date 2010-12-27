@@ -1,6 +1,7 @@
 #include <pololu/orangutan>
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
+#include <stdlib.h>
 #include "robot.h"
 
 Robot::Robot() {
@@ -8,6 +9,16 @@ Robot::Robot() {
 	setDistance(450);
 	initWait("  cali  ");
 	lineSensorsCalibrate();
+	initializeRandom();	
+}
+
+void Robot::initializeRandom() {
+	pol.readLineSensors(sensor_line_raw, IR_EMITTERS_ON);
+	long sum = 0;
+	for(int i = 0; i < 5; i++) {
+		sum += sensor_line_raw[i];
+	}
+	srand(sum%37); // %37 auf Aarons Verantwortung xP
 }
 
 void Robot::update() {
@@ -77,15 +88,8 @@ int Robot::getSpeedRight() {
 int Robot::getSpeedAverage() {
 	return (int)(speedr+speedl)/2;
 }
-
-unsigned int Robot::getDirection() {
-	if(speedl == speedr) {
-		return STRAIGHT;
-	} else if(speedl < speedr) {
-		return LEFT;
-	} else {
-		return RIGHT;
-	}
+int Robot::getSpeedAverageAbs() {
+	return ((speedr>0?speedr:-speedr)+(speedl>0?speedl:-speedl))/2;
 }
 
 //sensor line
