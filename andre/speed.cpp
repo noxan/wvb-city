@@ -40,7 +40,7 @@ void Speed::run(Robot *robot, unsigned long delta, bool crossroad) {
 		changeTime = 0;
 	}
 
-	unsigned long maxTime = (sensors[1] && crossroad)?STOP_TIME/2:STOP_TIME;
+	unsigned long maxTime = crossroad?STOP_TIME/2:STOP_TIME;
 	if(sensors[0] || (sensors[1] && crossroad)) {
 		if(time+delta <= maxTime) {
 			time += delta;
