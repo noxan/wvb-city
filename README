@@ -1,0 +1,8 @@
+wvb_city
+
+a school project based on pololu 3pi robots.
+
+features:
+- line follow
+- crash avoidance
+- crossroads
