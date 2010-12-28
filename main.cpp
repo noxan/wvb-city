@@ -1,103 +1,76 @@
-#include <pololu/OrangutanTime/OrangutanTime.h>
-#include <stdlib.h>
-#include "module.h"
-#include "line.h"
-#include "robot.h"
-#include "barcode.h"
-#include "speed.h"
-
-// handle undefined virtual function
-extern "C" void __cxa_pure_virtual() {
-	while (1);
-}
+#include "common.h"
 
 int main() {
-	Robot robot;
-	LineModule line(&robot);
-	Barcode bar(&robot);
-	SpeedModule speed(&robot, &line);
-	
-	robot.clear();
-	robot.print("Press B to start!");
-	robot.waitForButton(BUTTON_B);
-	do {
-		bar.meassureLength();
-		while(!robot.isPressed(BUTTON_B | BUTTON_C)) {
-			robot.clear();
-			robot.print("B: retry.", "C: enter.");
-			robot.delay(10);
-	   }
-	} while(robot.isPressed(BUTTON_B));
-	
-	static const int CROSSROADS = 0;
-	static const int NORMAL = 1;
-	
-	
-	int decision = 0;
-	//speedModule.setMaxSpeed(60);
-	
-	srand(robot.getLineSensorsRaw()[0]); //seed
-	
-	long unsigned int time;
-	int code;
-	int status = NORMAL;
-	speed.setMaxSpeed(60);
-	
-	while(true) {
-		time = robot.ms();
-		
-		if(status == NORMAL) {
-			robot.clear();
-			robot.print("NORM");
-			
-			robot.update();
-			
-			// handle modules
-			speed.run(time, true, false); //passt Geschwindigkeit unter Beruecksichtigung des mittleren Sensors an
-			line.run(time);
-			bar.run(time);
-			
-			
-			code = bar.getBarcode();
+	unsigned long time = 0; // Zeitpunkt am Anfang eines Schleifendurchlaufs
+	unsigned long delta = 0; // Zeit die ein Schleifendurchlauf benötigt
+	const unsigned long delay = 1; // Zeit die pro Schleifendurchlauf gewartet wird
 
-			//TODO: false wegmachen
-			if(code!=-1 and code&32 and code&1 and false) { //ein paar Prozessortakte sparen ;-)
-				if(code==37) robot.play("C");
-				//robot.clear();
-				//robot.print(code);
-				//robot.delay(200);
-				//robot.clear();
-				//robot.print(code);
-				//robot.delay(150);
-				
-				if(code==43) { //Schnellfahrcode
-					speed.setMaxSpeed(100);
-				} else if(code == 33 or code==35 or code==37 or code==39 or code==41) { //Kreuzung oder Abzweigung
-					int ndecision = -1; //Diese Richtungsentscheidung darf man nicht fahren, da keine strasse da
-					if(code==35)
-						ndecision = 0; //nicht nach rechts
-					else if(code==37)
-						ndecision = 1; //nicht geradeaus
-					else if(code==33)
-						ndecision = 2; //nicht nach links
-					do
-						decision = rand()%3;
-					while(decision == ndecision);
-					status = CROSSROADS;
-					speed.setMaxSpeed(30); //->Langsam fahren in Kreuzungen
+	robot.initWait("Ready!");
+
+	while(true) { // Hauptschleife
+		time = robot.ms();
+
+		robot.clear();
+		robot.update();
+
+		// Linien- und Codemodul"
+
+		//*
+
+		float v = robot.getSpeedAverageAbs();
+
+		if(robot.getStatus() == Robot::NORMAL) {
+			float v = robot.getSpeedAverage();
+			line.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f)));
+			code.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f))); // in Abhängigkeit von Geschwindigkeit
+			speed.run(&robot, delta, false);
+			
+			int c = code.getCode();
+			if(c != -1) {
+				speed.setDefaultSpeed(50, 1000);
+				robot.setStatus(Robot::CUNDEF);
+				if(c == -2) {
+					 robot.setStatus(Robot::CUNDEF);
+				} else if((c & Code::CMASK) == Code::C4) {
+					robot.setStatus(Robot::C4);
+				} else if((c & Code::CMASK) == Code::C3SL) {
+					robot.setStatus(Robot::C3SL);
+				} else if((c & Code::CMASK) == Code::C3SR) {
+					robot.setStatus(Robot::C3SR);
+				} else if((c & Code::CMASK) == Code::C3LR) {
+					robot.setStatus(Robot::C3LR);
 				}
+				crossroad.choose(robot.getStatus());
 			}
-		} else if(status == CROSSROADS) {
-			robot.clear();
-			robot.print("CR");
-			speed.run(time, true, true); //passt Geschwindigkeit unter Beruecksichtigung beider Sensoren an => rechts vor links
-			line.setTarget(decision);
-			line.run2(time);
-			if(line.hasFinished()) {
-				status = NORMAL;
-				speed.setMaxSpeed(60); // auf Strassen schneller fahren
-			}
+		} else {
+			crossroad.run(&robot, (unsigned long)(delta*((v>15?v-15:0)/35.0f)));
+			speed.run(&robot, delta, true);	
 		}
+
+		robot.print(robot.getStatus());
+//
+		/*/
+		
+		// Testausgabe zum Farbwerte anzeigen
+
+		//*
+		unsigned int *sensors = robot.getLineSensorsClean();
+		robot.print(sensors[2]);
+		robot.print(" ");
+		robot.print(sensors[3]);
+		robot.print(" ");
+		robot.print(sensors[4]);
+		robot.move(0,1);
+
+		unsigned int *sensors2 = robot.getLineSensorsCalibrate();
+		robot.print(sensors2[2]);
+		robot.print(" ");
+		robot.print(sensors2[4]);
+		//*/
+
+		robot.delay(delay);
+
+		delta = robot.ms() - time; // Berechnet die Zeit die ein Schleifendurchlauf benötigt hat
 	}
 	return 0;
 }

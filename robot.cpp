@@ -1,15 +1,24 @@
 #include <pololu/orangutan>
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
+#include <stdlib.h>
 #include "robot.h"
 
-
 Robot::Robot() {
-	pol.init(2000); //init
-	OrangutanTime::reset(); //zeit auf null setzen?
+    pol.init(2000); //init
 	setDistance(450);
 	initWait("  cali  ");
 	lineSensorsCalibrate();
+	initializeRandom();	
+}
+
+void Robot::initializeRandom() {
+	pol.readLineSensors(sensor_line_raw, IR_EMITTERS_ON);
+	long sum = 0;
+	for(int i = 0; i < 5; i++) {
+		sum += sensor_line_raw[i];
+	}
+	srand(sum%37); // %37 auf Aarons Verantwortung xP
 }
 
 void Robot::update() {
@@ -27,6 +36,14 @@ void Robot::update() {
 	}
 	sensor_distance[0] = OrangutanAnalog::read(7)<getDistance();
 	sensor_distance[1] = OrangutanAnalog::read(6)<getDistance();
+}
+
+void Robot::setStatus(unsigned int status) {
+	this->status = status;
+}
+
+unsigned int Robot::getStatus() {
+	return status;
 }
 
 void Robot::initWait() {
@@ -71,6 +88,9 @@ int Robot::getSpeedRight() {
 int Robot::getSpeedAverage() {
 	return (int)(speedr+speedl)/2;
 }
+int Robot::getSpeedAverageAbs() {
+	return ((speedr>0?speedr:-speedr)+(speedl>0?speedl:-speedl))/2;
+}
 
 //sensor line
 unsigned int *Robot::getLineSensorsRaw() {
@@ -88,14 +108,14 @@ void Robot::lineSensorsCalibrate() {
 	clear();
 	print("  cali  ", "progress");
 	for(int counter=0;counter<80;counter++) {
-		if(counter < 20 || counter >= 60) {
-			OrangutanMotors::setSpeeds(30, -30);
-		} else {
-			OrangutanMotors::setSpeeds(-30, 30);
+        if(counter < 20 || counter >= 60) {
+            OrangutanMotors::setSpeeds(30, -30);
+        } else {
+       	    OrangutanMotors::setSpeeds(-30, 30);
 		}
 		pol.calibrateLineSensors();
-		OrangutanTime::delayMilliseconds(20);
-	}
+        OrangutanTime::delayMilliseconds(20);
+    }
 	OrangutanMotors::setSpeeds(0, 0);
 }
 

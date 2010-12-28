@@ -13,9 +13,10 @@ CXX=avr-g++
 OBJ2HEX=avr-objcopy 
 LDFLAGS=-Wl,-gc-sections -lpololu_$(DEVICE) -Wl,-relax
 
+PORT = COM4
 PORT ?= /dev/ttyUSB0
 AVRDUDE=avrdude
-OBJECT_FILES=main.o module.o robot.o barcode.o queue.o line.o speed.o
+OBJECT_FILES=main.o robot.o speed.o line.o crossroad.o common.o code.o
 TARGET=main
 
 
@@ -33,11 +34,3 @@ clean:
 program: $(TARGET).hex
 	$(AVRDUDE) -p $(AVRDUDE_DEVICE) -c avrisp2 -P $(PORT) -U flash:w:$(TARGET).hex
 
-svnci:
-	svn ci ./ --username wvbcity
-
-svnud:
-	svn update
-
-svndi:
-	svn di
