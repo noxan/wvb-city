@@ -6,7 +6,7 @@
 #include <pololu/orangutan>
 #include <pololu/Pololu3pi/Pololu3pi.h>
 
-#define CALI_CODE 170
+#define CALI_CODE 150
 #define CALI_LINE 400
 
 class Robot {

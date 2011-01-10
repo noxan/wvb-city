@@ -38,7 +38,7 @@ void Code::run(Robot *robot, unsigned long delta) {
 					time = 0;
 				}
 			} else {
-				if(++dif >= 4) {
+				if(++dif >= 6) {
 					time = 0;
 					dif = 0;
 				}
@@ -51,7 +51,7 @@ void Code::run(Robot *robot, unsigned long delta) {
 				nextTime = 0;
 				leftcnt = 0;
 				status = CODE;
-				speed.setDefaultSpeed(65, 1000);
+				speed.setDefaultSpeed(Speed::DEFAULT_SPEED_CODE, 1000);
 			}
 		} else if(status == CODE) {
 			robot->print("C");

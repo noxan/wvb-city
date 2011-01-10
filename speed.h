@@ -5,9 +5,11 @@
 
 class Speed {
 public:
-	static const int DEFAULT_SPEED = 80;
+	static const int DEFAULT_SPEED = 70;
+	static const int DEFAULT_SPEED_CODE = 60;
+	static const int DEFAULT_SPEED_CROSS = 50;
 
-	static const unsigned long STOP_TIME = 500;
+	static const unsigned long STOP_TIME = 400;
 
 	Speed();
 	int getLeft();

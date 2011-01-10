@@ -16,7 +16,6 @@ int main() {
 		// Linien- und Codemodul"
 
 		//*
-
 		float v = robot.getSpeedAverageAbs();
 
 		if(robot.getStatus() == Robot::NORMAL) {
@@ -27,7 +26,7 @@ int main() {
 			
 			int c = code.getCode();
 			if(c != -1) {
-				speed.setDefaultSpeed(50, 1000);
+				speed.setDefaultSpeed(Speed::DEFAULT_SPEED_CROSS, 1000);
 				robot.setStatus(Robot::CUNDEF);
 				if(c == -2) {
 					 robot.setStatus(Robot::CUNDEF);
@@ -53,7 +52,7 @@ int main() {
 		
 		// Testausgabe zum Farbwerte anzeigen
 
-		//*
+		/*
 		unsigned int *sensors = robot.getLineSensorsClean();
 		robot.print(sensors[2]);
 		robot.print(" ");

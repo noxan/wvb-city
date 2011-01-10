@@ -8,7 +8,7 @@ public:
 	static const int CODE_EMPTY = -1;
 	static const int CODE_ERROR = -2;
 
-	static const unsigned long MAX_TIME = 50;
+	static const unsigned long MAX_TIME = 40;
 
 	static const unsigned int VALUES = 80;
 
